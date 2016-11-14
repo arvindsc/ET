@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script src="https://unpkg.com/react@15.3.2/dist/react.js"></script>
+	<script src="https://unpkg.com/react-dom@15.3.2/dist/react-dom.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+
+	<style>
+
+	</style>
+</head>
+
+<body>
+
+	<div id="container">
+
+	</div>
+
+	<div id="destination"></div>
+	<button id='connBootstrap'>Setup Connection</button>
+
+	<script type="text/babel">
+		var destination = document.querySelector("#container");
+
+		function initWebsocket() {
+			// for better performance - to avoid searching in DOM
+			var content = document.querySelector('#content');
+
+			// if user is running mozilla then use it's built-in WebSocket
+			window.WebSocket = window.WebSocket || window.MozWebSocket;
+
+			// if browser doesn't support WebSocket, just show some notification and exit
+			if (!window.WebSocket) {
+				content.html(document.querySelector('<p>', {
+					text: 'Sorry, but your browser doesn\'t ' + 'support WebSockets.'
+				}));
+
+				return;
+			}
+
+			// open connection
+			var connection = new WebSocket('ws://127.0.0.1:1337');
+
+			connection.onopen = function () {
+				console.log('connection established');
+				onkeydown();
+			};
+
+			connection.onerror = function (error) {
+				// just in there were some problems with conenction...
+				content.html(document.querySelector('<p>', {
+					text: 'Sorry, but there\'s some problem with your ' + 'connection or the server is down.'
+				}));
+			};
+
+			// most important part - incoming messages
+			connection.onmessage = function (message) {
+				//globalVar.callback(message);
+				Wrapper(message, document.getElementById('destination'))
+
+			};
+
+			/**
+			 * Send mesage when user presses Enter key
+			 */
+			function onkeydown() {
+				var msg = 1111
+					// send the message as an ordinary text
+				connection.send(msg);
+			}
+		}
+
+
+		var Wrapper = function (data, el) {
+				var render = function () {
+					return React.renderComponent( < LeaderBoard data = {
+							data
+						}
+						/>,el);
+					}
+					render();
+			
+				}
+
+
+				var LeaderBoard = React.createClass({
+					render: function () {
+						return ( < div >
+							< h1 > Output < /h1>   < div className = "content" >  < /div > < /div >
+						)
+					}
+				});
+
+
+
+$('#connBootstrap').on('click', function(){
+									initWebsocket();
+									 });
+			
+				
+	</script>
+</body>
+
+</html>
