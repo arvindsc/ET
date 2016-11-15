@@ -1,2 +1,1 @@
-# js-dev-env-demo
-Course demo
+# ET Framework
